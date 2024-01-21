@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Inventario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sistema de Inventario</h1>
+
+    <label for="farm">Farm:</label>
+    <input type="text" id="farm" placeholder="Nombre del farm">
+
+    <label for="nombre">Nombre:</label>
+    <select id="nombre"><option value="Casals">Casals</option>
+        <option value="Jonky">Jonky</option>
+        <option value="Chocobon">Chocobon</option>
+        <option value="EldelSaco">EldelSaco</option>
+        <option value="Ghurka">Ghurka</option>
+        <option value="Peku">Peku</option>
+        <option value="TonyGarrido">TonyGarrido</option>
+        <option value="Gabrilpda">Gabrilpda</option>
+        <option value="GorilaGlue">GorilaGlue</option>
+        <option value="M5">M5</option>
+        <option value="Chino(alo)">Chino(alo)</option>
+        <option value="Reymundo">Reymundo</option>
+        <option value="Willy">Willy</option>
+        <option value="Yiyi">Yiyi</option>
+        <option value="Oscu(líder)">Oscu(líder)</option>
+    </select>
+
+    <label for="cantidad">Cantidad:</label>
+    <input type="number" id="cantidad" placeholder="Cantidad">
+
+    <button onclick="agregarInventario()">Agregar al Inventario</button>
+
+    <h2>Inventario Actual</h2>
+    <ul id="inventarioLista"></ul>
+
+    <!-- Sección de reinicio del inventario -->
+    <h2>Reiniciar Inventario (Solo para Administradores)</h2>
+    <label for="usuario">Usuario:</label>
+    <input type="text" id="usuario" placeholder="Usuario">
+
+    <label for="contrasena">Contraseña:</label>
+    <input type="password" id="contrasena" placeholder="Contraseña">
+
+    <button onclick="reiniciarInventario()">Reiniciar Inventario</button>
+
+    <script>
+        // Objeto para almacenar el inventario
+        let inventario = obtenerInventario() || {};
+
+        // Cargar el inventario al cargar la página
+        window.onload = function () {
+            actualizarListaInventario();
+        };
+
+        // Guardar el inventario al salir de la página
+        window.addEventListener('unload', function () {
+            guardarInventario();
+        });
+
+        function agregarInventario() {
+            const nombreFarm = document.getElementById('farm').value;
+            const nombreCliente = document.getElementById('nombre').value;
+            const cantidadFarm = parseInt(document.getElementById('cantidad').value, 10);
+
+            // Construir una clave única para identificar la combinación de farm y cliente
+            const claveInventario = `${nombreFarm} - ${nombreCliente}`;
+
+            // Verificar si la combinación ya está en el inventario
+            if (inventario.hasOwnProperty(claveInventario)) {
+                // Si existe, sumar la cantidad
+                inventario[claveInventario] += cantidadFarm;
+            } else {
+                // Si no existe, agregar la combinación al inventario
+                inventario[claveInventario] = cantidadFarm;
+            }
+
+            // Actualizar la lista de inventario en la interfaz
+            actualizarListaInventario();
+
+            // Limpiar los campos de entrada
+            document.getElementById('farm').value = '';
+            document.getElementById('nombre').value = '';
+            document.getElementById('cantidad').value = '';
+
+            // Guardar el inventario actualizado
+            guardarInventario();
+        }
+
+        function actualizarListaInventario() {
+            const listaInventario = document.getElementById('inventarioLista');
+            listaInventario.innerHTML = '';
+
+            // Recorrer el objeto de inventario y agregar elementos a la lista
+            for (const combinacion in inventario) {
+                const cantidad = inventario[combinacion];
+                const listItem = document.createElement('li');
+                listItem.textContent = `${combinacion}: ${cantidad}`;
+                listaInventario.appendChild(listItem);
+            }
+        }
+
+        function guardarInventario() {
+            localStorage.setItem('inventario', JSON.stringify(inventario));
+        }
+
+        function obtenerInventario() {
+            const almacenamientoInventario = localStorage.getItem('inventario');
+            return almacenamientoInventario ? JSON.parse(almacenamientoInventario) : null;
+        }
+
+        function reiniciarInventario() {
+            const usuario = document.getElementById('usuario').value;
+            const contrasena = document.getElementById('contrasena').value;
+
+            // Verificar las credenciales del administrador (en este ejemplo, usuario: admin, contraseña: adminpass)
+            if (usuario === 'admin' && contrasena === 'adminpass') {
+                // Reiniciar el inventario
+                inventario = {};
+                actualizarListaInventario();
+                guardarInventario();
+                alert('Inventario reiniciado con éxito.');
+            } else {
+                alert('Credenciales incorrectas. No se puede reiniciar el inventario.');
+            }
+
+            // Limpiar los campos de entrada
+            document.getElementById('usuario').value = '';
+            document.getElementById('contrasena').value = '';
+        }
+    </script>
+</body>
+</html>
