@@ -1,0 +1,12 @@
+{
+  "name": "sistema-inventario",
+  "version": "1.0.0",
+  "description": "Sistema de Inventario con Servidor",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
