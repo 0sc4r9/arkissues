@@ -18,7 +18,8 @@
     <input type="text" id="farm" placeholder="Nombre del farm">
 
     <label for="nombre">Nombre:</label>
-    <select id="nombre"><option value="Casals">Casals</option>
+    <select id="nombre">
+        <option value="Casals">Casals</option>
         <option value="Jonky">Jonky</option>
         <option value="Chocobon">Chocobon</option>
         <option value="EldelSaco">EldelSaco</option>
@@ -63,9 +64,9 @@
         };
 
         // Guardar el inventario al salir de la página
-        window.addEventListener('unload', function () {
+        window.onbeforeunload = function () {
             guardarInventario();
-        });
+        };
 
         function agregarInventario() {
             const nombreFarm = document.getElementById('farm').value;
